@@ -89,7 +89,7 @@ class PPGRecorder {
             window.addEventListener('wasm-ready', () => {
                 console.log('WASM inference ready for use');
                 if (this.statusMessage && !this.isRecording) {
-                    this.statusMessage.textContent = 'Ready (Client-side inference enabled)';
+                    this.statusMessage.textContent = 'Ready';
                     this.statusMessage.className = 'status-message status-ready';
                 }
             });

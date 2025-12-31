@@ -28,6 +28,10 @@
     </style>
 
 
+    <link rel="manifest" href="static/manifest.json">
+    <meta name="theme-color" content="#FF0000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 
 <body>
@@ -73,20 +77,25 @@
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8 max-w-6xl">
 
-        <h1 class="text-4xl font-bold text-center mb-8">Measure Blood Pressure</h1>
+        <h1 class="text-4xl font-bold text-center mb-8">Measure</h1>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Instructions -->
             <div class="card bg-base-100 shadow-xl" id="instructions">
-                <div class="card-body">
-                    <h3 class="card-title">Instructions</h3>
-                    <ol class="list-decimal list-inside space-y-2">
-                        <li>Allow camera access when prompted</li>
-                        <li>Cover the <strong>rear camera and flash</strong> with your fingertip</li>
-                        <li>Apply gentle but firm pressure</li>
-                        <li>Click "Start Recording" and keep still for 30 seconds</li>
-                        <li>Wait for the analysis to complete</li>
-                    </ol>
+                <div class="collapse collapse-arrow">
+                    <input type="checkbox" />
+                    <div class="collapse-title text-xl font-medium card-title">
+                        Instructions
+                    </div>
+                    <div class="collapse-content">
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li>Allow camera access when prompted</li>
+                            <li>Cover the <strong>rear camera and flash</strong> with your fingertip</li>
+                            <li>Apply gentle but firm pressure</li>
+                            <li>Click "Start Recording" and keep still for 30 seconds</li>
+                            <li>Wait for the analysis to complete</li>
+                        </ol>
+                    </div>
                 </div>
             </div>
 
@@ -200,8 +209,8 @@
     <!-- Footer -->
     <footer class="footer footer-center p-10 bg-base-200 text-base-content mt-auto">
         <aside>
-            <p class="font-semibold">Blood Pressure Monitoring using Photoplethysmography (PPG)</p>
-            <p class="text-sm opacity-70">For informational purposes only. Not a substitute for medical advice.</p>
+            <p class="font-semibold">For informational purposes only. Not a substitute for medical advice.</p>
+            <p class="text-sm opacity-70">&copy; Chang Sau Sheong</p>
         </aside>
     </footer>
 
@@ -221,6 +230,8 @@
     <!-- Scripts -->
     <script src="static/js/wasm-inference.js"></script>
     <script src="static/js/recorder.js"></script>
+
+
 
 </body>
 

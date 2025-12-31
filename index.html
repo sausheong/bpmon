@@ -27,7 +27,11 @@
         }
     </style>
 
-    
+
+    <link rel="manifest" href="static/manifest.json">
+    <meta name="theme-color" content="#FF0000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 
 <body>
@@ -66,103 +70,125 @@
     </div>
 
     <!-- Flash Messages -->
-    
-    
-    
+
+
+
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8 max-w-6xl">
-        
-<div class="hero rounded-box mb-8 min-h-[400px]"
-    style="background-image: url(static/img/bp.jpg); background-size: cover; background-position: center right;">
-    <div class="hero-overlay bg-gradient-to-r to-transparent rounded-box"></div>
-    <div class="hero-content w-full justify-start py-16 relative z-10">
-        <div class="max-w-2xl text-left">
-            <h1 class="text-4xl md:text-5xl font-bold text-white drop-shadow-2xl mb-4 leading-tight uppercase">
-                BLOOD PRESSURE<br>MONITOR
-            </h1>
-            <p class="text-xl md:text-2xl text-white/90 drop-shadow-lg mb-8 font-light">
-                Measure your blood pressure using your smartphone camera
-            </p>
-            <div class="flex gap-4">
-                <a href="measure.html" class="btn btn-primary btn-lg text-lg px-8">
-                    Get Started
-                </a>
-                <a href="#how-it-works"
-                    class="btn btn-ghost btn-lg text-lg px-8 text-white border-white/50 hover:bg-white/20">
-                    Learn More
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div id="how-it-works" class="card bg-base-100 shadow-xl mb-8">
-    <div class="card-body">
-        <h2 class="card-title">How It Works</h2>
-        <p>This application uses <strong>Photoplethysmography (PPG)</strong> to estimate blood pressure from your
-            fingertip. By analyzing subtle color changes in your skin caused by blood flow, our AI model can predict
-            your systolic and diastolic blood pressure.</p>
-
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-            <div class="card bg-base-200">
-                <div class="card-body items-center text-center">
-                    <div class="badge badge-primary badge-lg mb-2">1</div>
-                    <h3 class="font-bold">Place Finger</h3>
-                    <p class="text-sm">Cover the rear camera and flash with your fingertip</p>
-                </div>
-            </div>
-            <div class="card bg-base-200">
-                <div class="card-body items-center text-center">
-                    <div class="badge badge-primary badge-lg mb-2">2</div>
-                    <h3 class="font-bold">Record 30s</h3>
-                    <p class="text-sm">Keep your finger still while the app records</p>
-                </div>
-            </div>
-            <div class="card bg-base-200">
-                <div class="card-body items-center text-center">
-                    <div class="badge badge-primary badge-lg mb-2">3</div>
-                    <h3 class="font-bold">AI Analysis</h3>
-                    <p class="text-sm">Our CNN model analyzes the signal and predicts BP</p>
-                </div>
-            </div>
-            <div class="card bg-base-200">
-                <div class="card-body items-center text-center">
-                    <div class="badge badge-primary badge-lg mb-2">4</div>
-                    <h3 class="font-bold">Get Results</h3>
-                    <p class="text-sm">View your blood pressure and heart rate</p>
+        <div class="hero rounded-box mb-8 min-h-[400px]"
+            style="background-image: url(static/img/bp.jpg); background-size: cover; background-position: center right;">
+            <div class="hero-overlay bg-gradient-to-r to-transparent rounded-box"></div>
+            <div class="hero-content w-full justify-start py-16 relative z-10">
+                <div class="max-w-2xl text-left">
+                    <h1 class="text-4xl md:text-5xl font-bold text-white drop-shadow-2xl mb-4 leading-tight uppercase">
+                        BLOOD PRESSURE<br>MONITOR
+                    </h1>
+                    <p class="text-xl md:text-2xl text-white/90 drop-shadow-lg mb-8 font-light">
+                        Measure your blood pressure using your smartphone camera
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="measure.html" class="btn btn-primary btn-lg text-lg px-8">
+                            Get Started
+                        </a>
+                        <a href="#how-it-works"
+                            class="btn btn-ghost btn-lg text-lg px-8 text-white border-white/50 hover:bg-white/20">
+                            Learn More
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="card bg-base-100 shadow-xl mb-8">
-    <div class="card-body">
-        <h2 class="card-title">Important Notes</h2>
-        <ul class="list-disc list-inside space-y-2">
-            <li><strong>Lighting:</strong> Use the app in a well-lit environment or ensure the camera flash is on</li>
-            <li><strong>Pressure:</strong> Apply gentle but firm pressure with your fingertip</li>
-            <li><strong>Stillness:</strong> Keep your hand steady during the entire recording</li>
-            <li><strong>Calibration:</strong> For best accuracy, calibrate with a reference blood pressure reading</li>
-            <li><strong>Medical Use:</strong> This is for informational purposes only, not for medical diagnosis</li>
-        </ul>
-    </div>
-</div>
+        <div id="how-it-works" class="card bg-base-100 shadow-xl mb-8">
+            <div class="card-body">
+                <h2 class="card-title">How It Works</h2>
+                <p>This application uses <strong>Photoplethysmography (PPG)</strong> to estimate blood pressure from
+                    your
+                    fingertip. By analyzing subtle color changes in your skin caused by blood flow, our AI model can
+                    predict
+                    your systolic and diastolic blood pressure.</p>
 
-<div class="text-center">
-    <a href="measure.html" class="btn btn-primary btn-lg">
-        Start Measurement
-    </a>
-</div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+                    <div class="card bg-base-200">
+                        <div class="card-body items-center text-center">
+                            <div class="badge badge-primary badge-lg mb-2">1</div>
+                            <h3 class="font-bold">Place Finger</h3>
+                            <p class="text-sm">Cover the rear camera and flash with your fingertip</p>
+                        </div>
+                    </div>
+                    <div class="card bg-base-200">
+                        <div class="card-body items-center text-center">
+                            <div class="badge badge-primary badge-lg mb-2">2</div>
+                            <h3 class="font-bold">Record 30s</h3>
+                            <p class="text-sm">Keep your finger still while the app records</p>
+                        </div>
+                    </div>
+                    <div class="card bg-base-200">
+                        <div class="card-body items-center text-center">
+                            <div class="badge badge-primary badge-lg mb-2">3</div>
+                            <h3 class="font-bold">AI Analysis</h3>
+                            <p class="text-sm">Our CNN model analyzes the signal and predicts BP</p>
+                        </div>
+                    </div>
+                    <div class="card bg-base-200">
+                        <div class="card-body items-center text-center">
+                            <div class="badge badge-primary badge-lg mb-2">4</div>
+                            <h3 class="font-bold">Get Results</h3>
+                            <p class="text-sm">View your blood pressure and heart rate</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card bg-success text-success-content shadow-xl mb-8">
+            <div class="card-body">
+                <h2 class="card-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    Privacy First
+                </h2>
+                <p class="font-semibold">All data processing and AI inference happens completely on your device.</p>
+                <p>Your video data and measurements are processed locally in your browser and are <strong>never sent to
+                        any server</strong>. Your privacy is guaranteed.</p>
+            </div>
+        </div>
+
+        <div class="card bg-base-100 shadow-xl mb-8">
+            <div class="card-body">
+                <h2 class="card-title">Important Notes</h2>
+                <ul class="list-disc list-inside space-y-2">
+                    <li><strong>Lighting:</strong> Use the app in a well-lit environment or ensure the camera flash is
+                        on</li>
+                    <li><strong>Pressure:</strong> Apply gentle but firm pressure with your fingertip</li>
+                    <li><strong>Stillness:</strong> Keep your hand steady during the entire recording</li>
+                    <li><strong>Calibration:</strong> For best accuracy, calibrate with a reference blood pressure
+                        reading</li>
+                    <li><strong>Medical Use:</strong> This is for informational purposes only, not for medical diagnosis
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a href="measure.html" class="btn btn-primary btn-lg">
+                Start Measurement
+            </a>
+        </div>
 
     </main>
 
     <!-- Footer -->
     <footer class="footer footer-center p-10 bg-base-200 text-base-content mt-auto">
         <aside>
-            <p class="font-semibold">Blood Pressure Monitoring using Photoplethysmography (PPG)</p>
-            <p class="text-sm opacity-70">For informational purposes only. Not a substitute for medical advice.</p>
+            <p class="font-semibold">For informational purposes only. Not a substitute for medical advice.</p>
+            <p class="text-sm opacity-70">&copy; Chang Sau Sheong</p>
         </aside>
     </footer>
 
@@ -170,7 +196,17 @@
     <script src="static/js/calibration.js"></script>
     <script src="static/js/history.js"></script>
 
-    
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js');
+            });
+        }
+    </script>
+
+
+
 </body>
 
 </html>
