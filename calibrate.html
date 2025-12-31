@@ -94,22 +94,23 @@
             </div>
 
             <div id="calibrationSection" style="display: none;">
+                <!-- Recent Measurement Card -->
                 <div class="card bg-base-100 shadow-xl mb-6">
                     <div class="card-body">
                         <h3 class="card-title">Your Recent Measurement</h3>
                         <div class="stats stats-vertical lg:stats-horizontal shadow mt-4">
                             <div class="stat">
-                                <div class="stat-title">Predicted SBP</div>
-                                <div class="stat-value text-primary" id="predSbp">--</div>
+                                <div class="stat-title text-sm opacity-70">Predicted SBP</div>
+                                <div class="stat-value text-primary text-2xl" id="predSbp">--</div>
                                 <div class="stat-desc">mmHg</div>
                             </div>
                             <div class="stat">
-                                <div class="stat-title">Predicted DBP</div>
-                                <div class="stat-value text-secondary" id="predDbp">--</div>
+                                <div class="stat-title text-sm opacity-70">Predicted DBP</div>
+                                <div class="stat-value text-secondary text-2xl" id="predDbp">--</div>
                                 <div class="stat-desc">mmHg</div>
                             </div>
                             <div class="stat">
-                                <div class="stat-title">Timestamp</div>
+                                <div class="stat-title text-sm opacity-70">Recorded</div>
                                 <div class="stat-value text-sm" id="predTimestamp">--</div>
                                 <div class="stat-desc" id="predDate">--</div>
                             </div>
@@ -117,40 +118,58 @@
                     </div>
                 </div>
 
+                <!-- Reference Values Form Card -->
                 <div class="card bg-base-100 shadow-xl mb-6">
                     <div class="card-body">
                         <h3 class="card-title">Enter Reference Values</h3>
-                        <p class="text-sm opacity-70 mb-4">Enter the blood pressure values from your reference device:
-                        </p>
+                        <p class="text-sm opacity-70 mb-4">Enter values from a medical-grade blood pressure monitor
+                            taken at the same time.</p>
 
                         <form id="calibrationForm">
-                            <div class="form-control mb-4">
-                                <label class="label">
-                                    <span class="label-text font-semibold">Systolic Blood Pressure (SBP)</span>
-                                </label>
-                                <input type="number" id="sbp" name="sbp" min="80" max="200" step="1" required
-                                    placeholder="e.g., 120" class="input input-bordered">
-                                <label class="label">
-                                    <span class="label-text-alt">Normal range: 90-140 mmHg</span>
-                                </label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="form-control w-full">
+                                    <label class="label">
+                                        <span class="label-text font-semibold">Reference Systolic (SBP)</span>
+                                    </label>
+                                    <input type="number" id="sbp" name="sbp" min="80" max="200" step="1" required
+                                        placeholder="e.g., 120" class="input input-bordered w-full">
+                                </div>
+
+                                <div class="form-control w-full">
+                                    <label class="label">
+                                        <span class="label-text font-semibold">Reference Diastolic (DBP)</span>
+                                    </label>
+                                    <input type="number" id="dbp" name="dbp" min="40" max="130" step="1" required
+                                        placeholder="e.g., 80" class="input input-bordered w-full">
+                                </div>
                             </div>
 
-                            <div class="form-control mb-6">
-                                <label class="label">
-                                    <span class="label-text font-semibold">Diastolic Blood Pressure (DBP)</span>
-                                </label>
-                                <input type="number" id="dbp" name="dbp" min="40" max="130" step="1" required
-                                    placeholder="e.g., 80" class="input input-bordered">
-                                <label class="label">
-                                    <span class="label-text-alt">Normal range: 60-90 mmHg</span>
-                                </label>
-                            </div>
-
-                            <div class="card-actions justify-end gap-2">
+                            <div class="card-actions justify-end mt-6">
                                 <a href="measure.html" class="btn btn-ghost">Cancel</a>
-                                <button type="submit" class="btn btn-primary">Save Calibration</button>
+                                <button type="submit" class="btn btn-primary px-8">Save Calibration</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Calibration Status Card -->
+            <div id="currentCalibrationCard" class="card bg-base-100 shadow-xl mb-6" style="display: none;">
+                <div class="card-body">
+                    <h3 class="card-title">Active Calibration</h3>
+                    <div class="bg-base-200 p-4 rounded-lg font-mono text-sm whitespace-pre-wrap mb-4"
+                        id="calibrationInfo">
+                        Loading calibration data...
+                    </div>
+                    <div class="card-actions justify-end">
+                        <button id="resetCalibrationBtn" class="btn btn-outline btn-error btn-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Reset Calibration
+                        </button>
                     </div>
                 </div>
             </div>
@@ -192,6 +211,36 @@
                 document.getElementById('predTimestamp').textContent = timestamp.toLocaleTimeString();
                 document.getElementById('predDate').textContent = timestamp.toLocaleDateString();
 
+                // Update calibration status display
+                function updateCalibrationStatus() {
+                    if (window.calibrationManager) {
+                        const info = window.calibrationManager.getCalibrationInfo();
+                        const card = document.getElementById('currentCalibrationCard');
+                        const infoElement = document.getElementById('calibrationInfo');
+
+                        if (info === 'No calibration data available') {
+                            card.style.display = 'none';
+                        } else {
+                            card.style.display = 'block';
+                            infoElement.textContent = info;
+                        }
+                    }
+                }
+
+                updateCalibrationStatus();
+
+                // Handle reset calibration
+                const resetBtn = document.getElementById('resetCalibrationBtn');
+                resetBtn.addEventListener('click', () => {
+                    if (confirm('Are you sure you want to clear all calibration data? This cannot be undone and may reduce accuracy until you recalibrate.')) {
+                        if (window.calibrationManager) {
+                            window.calibrationManager.clearCalibrations();
+                            updateCalibrationStatus();
+                            alert('Calibration data has been reset.');
+                        }
+                    }
+                });
+
                 // Handle form submission
                 const form = document.getElementById('calibrationForm');
                 form.addEventListener('submit', (e) => {
@@ -228,6 +277,9 @@
                                 'cnn', // Currently using CNN model
                                 null // No actual HR from reference device
                             );
+
+                            // Update status display
+                            updateCalibrationStatus();
 
                             // Show success message and redirect
                             alert('Calibration saved successfully! Future measurements will be more accurate.');
