@@ -58,8 +58,8 @@ class WasmInference {
      * Load the ONNX model
      */
     async loadModel() {
-        // Use absolute URL to help path resolution
-        const modelPath = window.location.origin + '/static/model/bp_model_cnn.onnx';
+        // Use URL constructor relative to current page to handle subdirectories (e.g. GitHub Pages) correctly
+        const modelPath = new URL('static/model/bp_model_cnn.onnx', window.location.href).href;
 
         console.log('Loading ONNX model from:', modelPath);
 
