@@ -28,6 +28,10 @@ class WasmInference {
                 throw new Error('ONNX Runtime Web not loaded');
             }
 
+            // Configure WASM environment
+            ort.env.wasm.numThreads = 1;
+            ort.env.wasm.proxy = false;
+
             // Load model and scaler in parallel
             await Promise.all([
                 this.loadModel(),
@@ -54,16 +58,14 @@ class WasmInference {
      * Load the ONNX model
      */
     async loadModel() {
-        const modelPath = 'static/model/bp_model_cnn.onnx';
+        // Use absolute URL to help path resolution
+        const modelPath = window.location.origin + '/static/model/bp_model_cnn.onnx';
 
-        // Fetch model bytes explicitly to avoid file system issues
-        const response = await fetch(modelPath);
-        if (!response.ok) throw new Error(`Failed to fetch model from ${modelPath}`);
-        const buffer = await response.arrayBuffer();
+        console.log('Loading ONNX model from:', modelPath);
 
-        // Create session
+        // Create session using file path - this allows ORT to find the .data file
         // executionProviders: ['wasm'] forces WebAssembly (no WebGL for 1D CNN usually better)
-        this.session = await ort.InferenceSession.create(buffer, {
+        this.session = await ort.InferenceSession.create(modelPath, {
             executionProviders: ['wasm'],
             graphOptimizationLevel: 'all'
         });
