@@ -56,9 +56,14 @@ class WasmInference {
     async loadModel() {
         const modelPath = 'static/model/bp_model_cnn.onnx';
 
+        // Fetch model bytes explicitly to avoid file system issues
+        const response = await fetch(modelPath);
+        if (!response.ok) throw new Error(`Failed to fetch model from ${modelPath}`);
+        const buffer = await response.arrayBuffer();
+
         // Create session
         // executionProviders: ['wasm'] forces WebAssembly (no WebGL for 1D CNN usually better)
-        this.session = await ort.InferenceSession.create(modelPath, {
+        this.session = await ort.InferenceSession.create(buffer, {
             executionProviders: ['wasm'],
             graphOptimizationLevel: 'all'
         });
