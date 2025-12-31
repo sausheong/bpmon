@@ -478,34 +478,87 @@ class PPGRecorder {
     }
 
     /**
-     * Simple heart rate calculation using peak detection
+     * Robust heart rate calculation using peak detection with signal preprocessing
      */
     calculateHeartRate(signal, fs) {
         try {
-            // Simple peak detection: find local maxima
-            // Min distance 0.4s (150 BPM)
-            const minExdist = Math.floor(0.4 * fs);
-            const peaks = [];
+            if (signal.length < fs * 2) return 70.0; // Need at least 2 seconds
 
-            for (let i = 1; i < signal.length - 1; i++) {
-                if (signal[i] > signal[i - 1] && signal[i] > signal[i + 1]) {
-                    if (peaks.length === 0 || (i - peaks[peaks.length - 1]) > minExdist) {
+            // 1. Preprocessing: Smooth signal and remove baseline drift
+            const smoothed = new Float32Array(signal.length);
+            const baseline = new Float32Array(signal.length);
+
+            // Smoothing window (0.1s)
+            const smoothWindow = Math.max(3, Math.floor(0.1 * fs));
+            // Baseline window (1.0s)
+            const baselineWindow = Math.max(10, Math.floor(1.0 * fs));
+
+            for (let i = 0; i < signal.length; i++) {
+                // Moving average for smoothing
+                let sSum = 0, sCount = 0;
+                for (let j = Math.max(0, i - Math.floor(smoothWindow / 2)); j < Math.min(signal.length, i + Math.ceil(smoothWindow / 2)); j++) {
+                    sSum += signal[j];
+                    sCount++;
+                }
+                smoothed[i] = sSum / sCount;
+
+                // Moving average for baseline
+                let bSum = 0, bCount = 0;
+                for (let j = Math.max(0, i - Math.floor(baselineWindow / 2)); j < Math.min(signal.length, i + Math.ceil(baselineWindow / 2)); j++) {
+                    bSum += signal[j];
+                    bCount++;
+                }
+                baseline[i] = bSum / bCount;
+            }
+
+            // Remove baseline and normalize
+            const processed = new Float32Array(signal.length);
+            for (let i = 0; i < signal.length; i++) {
+                processed[i] = smoothed[i] - baseline[i];
+            }
+
+            // 2. Adaptive Peak Detection
+            // Min distance between peaks (0.4s = max 150 BPM)
+            const minPeakDist = Math.floor(0.4 * fs);
+
+            // Calculate dynamic threshold (percentage of local max)
+            const localMax = processed.reduce((a, b) => Math.max(a, b), -Infinity);
+            const localMin = processed.reduce((a, b) => Math.min(a, b), Infinity);
+            const threshold = (localMax - localMin) * 0.3; // 30% of range
+
+            const peaks = [];
+            for (let i = 1; i < processed.length - 1; i++) {
+                if (processed[i] > processed[i - 1] &&
+                    processed[i] > processed[i + 1] &&
+                    processed[i] > threshold) {
+
+                    if (peaks.length === 0 || (i - peaks[peaks.length - 1]) > minPeakDist) {
                         peaks.push(i);
                     }
                 }
             }
 
-            if (peaks.length < 2) return 70.0;
+            console.log(`HR Debug: Found ${peaks.length} peaks in ${signal.length / fs}s signal. Threshold: ${threshold.toFixed(4)}`);
 
+            if (peaks.length < 2) {
+                console.warn('HR Debug: Not enough peaks found, defaulting to 70');
+                return 70.0;
+            }
+
+            // 3. Calculate BPM from peak intervals
             const intervals = [];
             for (let i = 1; i < peaks.length; i++) {
                 intervals.push((peaks[i] - peaks[i - 1]) / fs);
             }
 
-            const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-            const bpm = 60 / avgInterval;
+            // Use median interval for robustness against single missed/extra peaks
+            intervals.sort((a, b) => a - b);
+            const medianInterval = intervals[Math.floor(intervals.length / 2)];
+            const bpm = 60 / medianInterval;
 
-            return Math.min(Math.max(bpm, 40), 180);
+            console.log(`HR Debug: Median interval ${medianInterval.toFixed(3)}s -> Calculated BPM: ${bpm.toFixed(1)}`);
+
+            return Math.min(Math.max(bpm, 45), 180);
         } catch (e) {
             console.error('HR calc error', e);
             return 72.0;
