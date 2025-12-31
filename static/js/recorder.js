@@ -617,18 +617,18 @@ class PPGRecorder {
         this.loadingSection.style.display = 'none';
         this.resultsSection.style.display = 'block';
 
-        // Update values (use calibrated values)
-        document.getElementById('sbpValue').textContent = Math.round(sbp * 10) / 10;
-        document.getElementById('dbpValue').textContent = Math.round(dbp * 10) / 10;
-        document.getElementById('hrValue').textContent = data.heart_rate;
+        // Update values (use calibrated values) - Round to whole numbers
+        document.getElementById('sbpValue').textContent = Math.round(sbp);
+        document.getElementById('dbpValue').textContent = Math.round(dbp);
+        document.getElementById('hrValue').textContent = Math.round(data.heart_rate);
 
         // Store both raw and calibrated values in session for calibration page
         const measurementData = {
             sbp_raw: data.sbp,
             dbp_raw: data.dbp,
-            sbp: Math.round(sbp * 10) / 10,
-            dbp: Math.round(dbp * 10) / 10,
-            heart_rate: data.heart_rate,
+            sbp: Math.round(sbp),
+            dbp: Math.round(dbp),
+            heart_rate: Math.round(data.heart_rate),
             timestamp: new Date().toISOString(),
             calibrated: isCalibrated,
             signal_quality: data.signal_quality,
