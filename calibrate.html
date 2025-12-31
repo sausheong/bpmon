@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Calibrate - Blood Pressure Monitor</title>
+
+    <!-- Tailwind CSS + DaisyUI 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+
+    <style>
+        /* Custom styles for video and canvas sizing */
+        #videoElement {
+            height: 150px;
+            width: 100%;
+            object-fit: cover;
+            background-color: #000;
+        }
+
+        #waveformCanvas {
+            height: 150px;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+    </style>
+
+    
+</head>
+
+<body>
+    <!-- Navigation -->
+    <div class="navbar bg-base-100 shadow-lg">
+        <div class="navbar-start">
+            <a href="index.html" class="btn btn-ghost text-xl">
+                BP Monitor
+            </a>
+        </div>
+        <div class="navbar-center hidden lg:flex">
+            <ul class="menu menu-horizontal px-1">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="measure.html">Measure</a></li>
+                <li><a href="history.html">History</a></li>
+            </ul>
+        </div>
+        <div class="navbar-end">
+            <!-- Mobile menu -->
+            <div class="dropdown dropdown-end lg:hidden">
+                <div tabindex="0" role="button" class="btn btn-ghost btn-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </div>
+                <ul tabindex="0"
+                    class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="measure.html">Measure</a></li>
+                    <li><a href="history.html">History</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    
+    
+    
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 max-w-6xl">
+        
+<h1 class="text-4xl font-bold text-center mb-8">Calibrate Measurement</h1>
+
+<div class="max-w-2xl mx-auto">
+    <div class="alert alert-info mb-6">
+        <span>To improve accuracy, calibrate your measurement with a reference blood pressure reading from a medical
+            device (e.g., arm cuff monitor).</span>
+    </div>
+
+    <div id="noPredictionSection" class="card bg-base-100 shadow-xl" style="display: none;">
+        <div class="card-body items-center text-center">
+            <p class="mb-4">No recent measurement found. Please measure your blood pressure first.</p>
+            <a href="measure.html" class="btn btn-primary">Go to Measurement</a>
+        </div>
+    </div>
+
+    <div id="calibrationSection" style="display: none;">
+        <div class="card bg-base-100 shadow-xl mb-6">
+            <div class="card-body">
+                <h3 class="card-title">Your Recent Measurement</h3>
+                <div class="stats stats-vertical lg:stats-horizontal shadow mt-4">
+                    <div class="stat">
+                        <div class="stat-title">Predicted SBP</div>
+                        <div class="stat-value text-primary" id="predSbp">--</div>
+                        <div class="stat-desc">mmHg</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Predicted DBP</div>
+                        <div class="stat-value text-secondary" id="predDbp">--</div>
+                        <div class="stat-desc">mmHg</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Timestamp</div>
+                        <div class="stat-value text-sm" id="predTimestamp">--</div>
+                        <div class="stat-desc" id="predDate">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-base-100 shadow-xl mb-6">
+            <div class="card-body">
+                <h3 class="card-title">Enter Reference Values</h3>
+                <p class="text-sm opacity-70 mb-4">Enter the blood pressure values from your reference device:</p>
+
+                <form id="calibrationForm">
+                    <div class="form-control mb-4">
+                        <label class="label">
+                            <span class="label-text font-semibold">Systolic Blood Pressure (SBP)</span>
+                        </label>
+                        <input type="number" id="sbp" name="sbp" min="80" max="200" step="1" required
+                            placeholder="e.g., 120" class="input input-bordered">
+                        <label class="label">
+                            <span class="label-text-alt">Normal range: 90-140 mmHg</span>
+                        </label>
+                    </div>
+
+                    <div class="form-control mb-6">
+                        <label class="label">
+                            <span class="label-text font-semibold">Diastolic Blood Pressure (DBP)</span>
+                        </label>
+                        <input type="number" id="dbp" name="dbp" min="40" max="130" step="1" required
+                            placeholder="e.g., 80" class="input input-bordered">
+                        <label class="label">
+                            <span class="label-text-alt">Normal range: 60-90 mmHg</span>
+                        </label>
+                    </div>
+
+                    <div class="card-actions justify-end gap-2">
+                        <a href="measure.html" class="btn btn-ghost">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save Calibration</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h3 class="card-title">Calibration Tips</h3>
+            <ul class="list-disc list-inside space-y-2">
+                <li>Use a clinically validated blood pressure monitor for reference</li>
+                <li>Take the reference measurement immediately after the app measurement</li>
+                <li>Sit quietly for 5 minutes before both measurements</li>
+                <li>Avoid caffeine, exercise, or smoking for 30 minutes before measuring</li>
+                <li>Calibrate periodically (every few weeks) for best accuracy</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Load prediction data from sessionStorage
+    document.addEventListener('DOMContentLoaded', () => {
+        const lastPrediction = sessionStorage.getItem('lastPrediction');
+
+        if (!lastPrediction) {
+            document.getElementById('noPredictionSection').style.display = 'block';
+            return;
+        }
+
+        const prediction = JSON.parse(lastPrediction);
+
+        // Show calibration section
+        document.getElementById('calibrationSection').style.display = 'block';
+
+        // Display prediction data (use raw values for calibration)
+        document.getElementById('predSbp').textContent = prediction.sbp_raw || prediction.sbp;
+        document.getElementById('predDbp').textContent = prediction.dbp_raw || prediction.dbp;
+
+        const timestamp = new Date(prediction.timestamp);
+        document.getElementById('predTimestamp').textContent = timestamp.toLocaleTimeString();
+        document.getElementById('predDate').textContent = timestamp.toLocaleDateString();
+
+        // Handle form submission
+        const form = document.getElementById('calibrationForm');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const refSbp = parseFloat(document.getElementById('sbp').value);
+            const refDbp = parseFloat(document.getElementById('dbp').value);
+
+            // Validate
+            if (refSbp < 80 || refSbp > 200) {
+                alert('Invalid SBP value. Please enter a value between 80 and 200.');
+                return;
+            }
+
+            if (refDbp < 40 || refDbp > 130) {
+                alert('Invalid DBP value. Please enter a value between 40 and 130.');
+                return;
+            }
+
+            if (refDbp >= refSbp) {
+                alert('DBP must be lower than SBP.');
+                return;
+            }
+
+            // Save calibration using the calibration manager
+            if (window.calibrationManager) {
+                try {
+                    window.calibrationManager.calibrate(
+                        prediction.sbp_raw || prediction.sbp,
+                        prediction.dbp_raw || prediction.dbp,
+                        prediction.heart_rate,
+                        refSbp,
+                        refDbp,
+                        'cnn', // Currently using CNN model
+                        null // No actual HR from reference device
+                    );
+
+                    // Show success message and redirect
+                    alert('Calibration saved successfully! Future measurements will be more accurate.');
+                    window.location.href = "measure.html";
+                } catch (error) {
+                    console.error('Error saving calibration:', error);
+                    alert('An error occurred while saving calibration. Please try again.');
+                }
+            } else {
+                alert('Calibration manager not available. Please refresh the page.');
+            }
+        });
+    });
+</script>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer footer-center p-10 bg-base-200 text-base-content mt-auto">
+        <aside>
+            <p class="font-semibold">Blood Pressure Monitoring using Photoplethysmography (PPG)</p>
+            <p class="text-sm opacity-70">For informational purposes only. Not a substitute for medical advice.</p>
+        </aside>
+    </footer>
+
+    <!-- Global Scripts -->
+    <script src="static/js/calibration.js"></script>
+    <script src="static/js/history.js"></script>
+
+    
+</body>
+
+</html>

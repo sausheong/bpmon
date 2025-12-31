@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Measure - Blood Pressure Monitor</title>
+
+    <!-- Tailwind CSS + DaisyUI 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+
+    <style>
+        /* Custom styles for video and canvas sizing */
+        #videoElement {
+            height: 150px;
+            width: 100%;
+            object-fit: cover;
+            background-color: #000;
+        }
+
+        #waveformCanvas {
+            height: 150px;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+    </style>
+
+    
+</head>
+
+<body>
+    <!-- Navigation -->
+    <div class="navbar bg-base-100 shadow-lg">
+        <div class="navbar-start">
+            <a href="index.html" class="btn btn-ghost text-xl">
+                BP Monitor
+            </a>
+        </div>
+        <div class="navbar-center hidden lg:flex">
+            <ul class="menu menu-horizontal px-1">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="measure.html">Measure</a></li>
+                <li><a href="history.html">History</a></li>
+            </ul>
+        </div>
+        <div class="navbar-end">
+            <!-- Mobile menu -->
+            <div class="dropdown dropdown-end lg:hidden">
+                <div tabindex="0" role="button" class="btn btn-ghost btn-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </div>
+                <ul tabindex="0"
+                    class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="measure.html">Measure</a></li>
+                    <li><a href="history.html">History</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    
+    
+    
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 max-w-6xl">
+        
+<h1 class="text-4xl font-bold text-center mb-8">Measure Blood Pressure</h1>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Instructions -->
+    <div class="card bg-base-100 shadow-xl" id="instructions">
+        <div class="card-body">
+            <h3 class="card-title">Instructions</h3>
+            <ol class="list-decimal list-inside space-y-2">
+                <li>Allow camera access when prompted</li>
+                <li>Cover the <strong>rear camera and flash</strong> with your fingertip</li>
+                <li>Apply gentle but firm pressure</li>
+                <li>Click "Start Recording" and keep still for 30 seconds</li>
+                <li>Wait for the analysis to complete</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Camera Interface -->
+    <div class="lg:col-span-2">
+        <div class="card bg-base-100 shadow-xl" id="cameraSection">
+            <div class="card-body">
+                <!-- Timer Display (above waveform) -->
+                <div class="text-center mb-4">
+                    <div id="timerDisplay" class="text-3xl font-bold">Ready</div>
+                    <div id="statusMessage" class="text-sm mt-2"></div>
+                </div>
+
+                <!-- Video and Waveform -->
+                <div class="space-y-0">
+                    <video id="videoElement" autoplay playsinline class="rounded-t-lg"></video>
+                    <canvas id="waveformCanvas" class="rounded-b-lg"></canvas>
+                </div>
+
+                <!-- Controls -->
+                <div class="card-actions justify-center mt-6">
+                    <button id="startBtn" class="btn btn-primary btn-lg">
+                        Start Recording
+                    </button>
+                    <button id="stopBtn" class="btn btn-secondary btn-lg" style="display: none;">
+                        Stop Recording
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div class="card bg-base-100 shadow-xl" id="loadingSection" style="display: none;">
+            <div class="card-body items-center text-center">
+                <span class="loading loading-spinner loading-lg text-primary"></span>
+                <p class="text-xl font-semibold mt-4">Processing your measurement...</p>
+                <p class="text-sm opacity-70">This may take a few seconds</p>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="card bg-base-100 shadow-xl" id="resultsSection" style="display: none;">
+            <div class="card-body">
+                <h2 class="card-title justify-center mb-4">Your Results</h2>
+
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="stat bg-primary text-primary-content rounded-box">
+                        <div class="stat-title text-primary-content opacity-80">Systolic (SBP)</div>
+                        <div class="stat-value" id="sbpValue">--</div>
+                        <div class="stat-desc text-primary-content">mmHg</div>
+                    </div>
+                    <div class="stat bg-secondary text-secondary-content rounded-box">
+                        <div class="stat-title text-secondary-content opacity-80">Diastolic (DBP)</div>
+                        <div class="stat-value" id="dbpValue">--</div>
+                        <div class="stat-desc text-secondary-content">mmHg</div>
+                    </div>
+                    <div class="stat bg-accent text-accent-content rounded-box">
+                        <div class="stat-title text-accent-content opacity-80">Heart Rate</div>
+                        <div class="stat-value" id="hrValue">--</div>
+                        <div class="stat-desc text-accent-content">BPM</div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <span class="font-semibold">Signal Quality:</span>
+                        <span class="badge badge-lg ml-2" id="qualityValue">--</span>
+                    </div>
+                    <div>
+                        <span class="font-semibold">Confidence:</span>
+                        <span class="badge badge-lg ml-2" id="confidenceValue">--</span>
+                    </div>
+                    <div>
+                        <span class="font-semibold">Calibrated:</span>
+                        <span class="badge badge-lg ml-2" id="calibratedValue">--</span>
+                    </div>
+                </div>
+
+                <div class="text-center mb-6">
+                    <span class="font-semibold text-sm opacity-70">Inference:</span>
+                    <span class="badge badge-sm badge-ghost ml-2" id="inferenceSource">Initializing...</span>
+                </div>
+
+                <div class="card-actions justify-center gap-4">
+                    <a href="calibrate.html" class="btn btn-outline">
+                        Calibrate This Measurement
+                    </a>
+                    <button id="measureAgainBtn" class="btn btn-primary">
+                        Measure Again
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Display -->
+        <div class="card bg-base-100 shadow-xl" id="errorSection" style="display: none;">
+            <div class="card-body items-center text-center">
+                <div class="text-6xl mb-4">!</div>
+                <h3 class="card-title">Error</h3>
+                <p id="errorMessage" class="mb-4"></p>
+                <button id="retryBtn" class="btn btn-primary">Try Again</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer footer-center p-10 bg-base-200 text-base-content mt-auto">
+        <aside>
+            <p class="font-semibold">Blood Pressure Monitoring using Photoplethysmography (PPG)</p>
+            <p class="text-sm opacity-70">For informational purposes only. Not a substitute for medical advice.</p>
+        </aside>
+    </footer>
+
+    <!-- Global Scripts -->
+    <script src="static/js/calibration.js"></script>
+    <script src="static/js/history.js"></script>
+
+    
+<!-- ONNX Runtime Web -->
+<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.16.3/dist/ort.min.js"></script>
+<!-- Scripts -->
+<script src="static/js/wasm-inference.js"></script>
+<script src="static/js/recorder.js"></script>
+
+</body>
+
+</html>
