@@ -109,8 +109,8 @@ class CalibrationManager {
         this.saveCalibrations(data);
 
         console.log(`✓ Calibration saved for ${modelType.toUpperCase()}!`);
-        console.log(`  SBP offset: ${sbpOffset >= 0 ? '+' : ''}${sbpOffset.toFixed(1)} mmHg (predicted: ${predictedSbp.toFixed(1)} → actual: ${actualSbp.toFixed(1)})`);
-        console.log(`  DBP offset: ${dbpOffset >= 0 ? '+' : ''}${dbpOffset.toFixed(1)} mmHg (predicted: ${predictedDbp.toFixed(1)} → actual: ${actualDbp.toFixed(1)})`);
+        console.log(`  SBP offset: ${sbpOffset >= 0 ? '+' : ''}${Math.round(sbpOffset)} mmHg (predicted: ${Math.round(predictedSbp)} → actual: ${Math.round(actualSbp)})`);
+        console.log(`  DBP offset: ${dbpOffset >= 0 ? '+' : ''}${Math.round(dbpOffset)} mmHg (predicted: ${Math.round(predictedDbp)} → actual: ${Math.round(actualDbp)})`);
 
         return calibration;
     }
@@ -160,7 +160,7 @@ class CalibrationManager {
         const calibratedSbp = predictedSbp + avgSbpOffset;
         const calibratedDbp = predictedDbp + avgDbpOffset;
 
-        console.log(`Applied calibration (${modelType.toUpperCase()}): SBP ${predictedSbp.toFixed(1)} → ${calibratedSbp.toFixed(1)}, DBP ${predictedDbp.toFixed(1)} → ${calibratedDbp.toFixed(1)}`);
+        console.log(`Applied calibration (${modelType.toUpperCase()}): SBP ${Math.round(predictedSbp)} → ${Math.round(calibratedSbp)}, DBP ${Math.round(predictedDbp)} → ${Math.round(calibratedDbp)}`);
 
         return {
             sbp: calibratedSbp,
@@ -187,7 +187,7 @@ class CalibrationManager {
             const latest = data.rf[data.rf.length - 1];
             info.push(`RF Model: ${data.rf.length} measurement(s)`);
             info.push(`  Latest: ${latest.timestamp.substring(0, 16)}`);
-            info.push(`  Offset: SBP ${latest.offsets.sbp >= 0 ? '+' : ''}${latest.offsets.sbp.toFixed(1)}, DBP ${latest.offsets.dbp >= 0 ? '+' : ''}${latest.offsets.dbp.toFixed(1)}`);
+            info.push(`  Offset: SBP ${latest.offsets.sbp >= 0 ? '+' : ''}${Math.round(latest.offsets.sbp)}, DBP ${latest.offsets.dbp >= 0 ? '+' : ''}${Math.round(latest.offsets.dbp)}`);
             info.push('');
         }
 
@@ -195,7 +195,7 @@ class CalibrationManager {
             const latest = data.cnn[data.cnn.length - 1];
             info.push(`CNN Model: ${data.cnn.length} measurement(s)`);
             info.push(`  Latest: ${latest.timestamp.substring(0, 16)}`);
-            info.push(`  Offset: SBP ${latest.offsets.sbp >= 0 ? '+' : ''}${latest.offsets.sbp.toFixed(1)}, DBP ${latest.offsets.dbp >= 0 ? '+' : ''}${latest.offsets.dbp.toFixed(1)}`);
+            info.push(`  Offset: SBP ${latest.offsets.sbp >= 0 ? '+' : ''}${Math.round(latest.offsets.sbp)}, DBP ${latest.offsets.dbp >= 0 ? '+' : ''}${Math.round(latest.offsets.dbp)}`);
         }
 
         return info.join('\n');

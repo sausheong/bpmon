@@ -1,12 +1,12 @@
 /**
- * PPG Recorder - Client-side blood pressure measurement
+ * PPG Recorder - Blood pressure measurement
  * 
  * This script handles:
  * - Camera access and video preview
  * - Frame-by-frame RGB extraction
  * - Signal buffering and channel selection
- * - HTTP POST to server for inference
- * - Results display and error handling
+ * - On-device inference and results display
+ * - Error handling
  */
 
 class PPGRecorder {
@@ -379,8 +379,8 @@ class PPGRecorder {
             return;
         }
 
-        // Select best channel and send to server
-        this.processAndSend(duration);
+        // Run inference
+        this.processInference(duration);
     }
 
     selectBestChannel() {
@@ -404,51 +404,27 @@ class PPGRecorder {
         }
     }
 
-    async processAndSend(duration) {
+    async processInference(duration) {
         // Select best channel
         const { channel, signal } = this.selectBestChannel();
-
-        // Calculate FPS
-        const fps = this.frameCount / duration;
-
-        console.log(`Recording complete: ${duration.toFixed(1)}s, ${this.frameCount} frames, ${fps.toFixed(1)} FPS`);
-        console.log(`Selected channel: ${channel}, signal length: ${signal.length}`);
 
         // Show loading
         this.showLoading();
 
-        // 1. Try WASM inference first
+        // Run inference
         if (window.wasmInference && window.wasmInference.isReady) {
             try {
-                console.log('Attempting client-side WASM inference...');
-
-                // Resample signal to 125Hz if needed
-                // Note: The WASM module expects raw signal and handles windowing,
-                // but we should match the server logic.
-                // Server logic: Resamples to 125Hz, then windowing.
-                // JS WASM logic we wrote: Expects signal, normalizes.
-                // We need to resample here or in WASM module.
-                // The current WASM module creates windows from raw signal but DOES NOT resample.
-                // We should resample here using linear interpolation.
-
                 const TARGET_FS = 125;
                 const targetLength = Math.floor(duration * TARGET_FS);
                 const resampledSignal = this.resample(signal, targetLength);
 
-                // Add heart rate calculation here since it was done on server
-                // We can use a simple peak detection or reuse server logic via separate endpoint?
-                // For a fully offline experience, we need JS heart rate calc.
-                // Let's implement a simple one or keep it simple.
-                // Actually, the user asked for "wasm program should use the CNN model".
-                // Heart rate is separate.
-
-                // Let's implement a simple HR calc in JS:
+                // calculate heart rate
                 const heartRate = this.calculateHeartRate(resampledSignal, TARGET_FS);
 
                 // Run inference
                 const prediction = await window.wasmInference.predict(resampledSignal);
 
-                // Assess signal quality (simple client version)
+                // Assess signal quality
                 const signalQuality = this.assessSignalQuality(resampledSignal);
 
                 // Calculate confidence
@@ -461,31 +437,23 @@ class PPGRecorder {
                     heart_rate: heartRate,
                     confidence: confidence,
                     signal_quality: signalQuality,
-                    message: 'Prediction completed successfully (Client-side)',
+                    message: 'Prediction completed successfully',
                     channel: channel,
-                    num_windows: prediction.num_windows,
-                    source: 'wasm'
+                    num_windows: prediction.num_windows
                 };
 
-                console.log('WASM inference successful:', resultData);
                 this.displayResults(resultData);
                 return;
 
             } catch (err) {
-                console.warn('WASM inference failed, falling back to server:', err);
-                // Fallthrough to server request
+                console.error('Inference error:', err);
             }
         }
 
-        // 2. Server-side fallback (Disabled for static site)
-        console.warn('WASM inference failed and server fallback is not available in static mode.');
         this.showError(
             'Inference failed. Please try again.',
-            'WASM_ERROR'
+            'INFERENCE_ERROR'
         );
-        return;
-
-
     }
 
     /**
@@ -624,8 +592,8 @@ class PPGRecorder {
 
         // Store both raw and calibrated values in session for calibration page
         const measurementData = {
-            sbp_raw: data.sbp,
-            dbp_raw: data.dbp,
+            sbp_raw: Math.round(data.sbp),
+            dbp_raw: Math.round(data.dbp),
             sbp: Math.round(sbp),
             dbp: Math.round(dbp),
             heart_rate: Math.round(data.heart_rate),
@@ -634,8 +602,7 @@ class PPGRecorder {
             signal_quality: data.signal_quality,
             confidence: data.confidence,
             channel: data.channel,
-            num_windows: data.num_windows,
-            source: data.source || 'server'
+            num_windows: data.num_windows
         };
 
         sessionStorage.setItem('lastPrediction', JSON.stringify(measurementData));
@@ -668,13 +635,6 @@ class PPGRecorder {
         const calibratedElement = document.getElementById('calibratedValue');
         calibratedElement.textContent = isCalibrated ? 'Yes' : 'No';
         calibratedElement.className = isCalibrated ? 'badge badge-lg badge-success' : 'badge badge-lg badge-ghost';
-
-        // Show inference source if custom element exists (optional)
-        const sourceElement = document.getElementById('inferenceSource');
-        if (sourceElement && data.source) {
-            sourceElement.textContent = data.source === 'wasm' ? 'Client-side (WASM)' : 'Server-side';
-            sourceElement.className = data.source === 'wasm' ? 'badge badge-sm badge-accent' : 'badge badge-sm badge-ghost';
-        }
     }
 
     showError(message, code) {

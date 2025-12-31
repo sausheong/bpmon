@@ -132,9 +132,9 @@
                     tableRows += `
             <tr>
                 <td class="text-sm">${formattedTime}</td>
-                <td><span class="font-semibold">${pred.sbp}</span> <span class="text-xs opacity-70">mmHg</span></td>
-                <td><span class="font-semibold">${pred.dbp}</span> <span class="text-xs opacity-70">mmHg</span></td>
-                <td><span class="font-semibold">${pred.heart_rate}</span> <span class="text-xs opacity-70">BPM</span></td>
+                <td><span class="font-semibold">${Math.round(pred.sbp)}</span> <span class="text-xs opacity-70">mmHg</span></td>
+                <td><span class="font-semibold">${Math.round(pred.dbp)}</span> <span class="text-xs opacity-70">mmHg</span></td>
+                <td><span class="font-semibold">${Math.round(pred.heart_rate)}</span> <span class="text-xs opacity-70">BPM</span></td>
                 <td><span class="badge badge-sm ${qualityBadge}">${pred.signal_quality}</span></td>
                 <td>${calibratedBadge}</td>
                 <td>

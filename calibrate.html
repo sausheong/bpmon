@@ -184,9 +184,9 @@
                 // Show calibration section
                 document.getElementById('calibrationSection').style.display = 'block';
 
-                // Display prediction data (use raw values for calibration)
-                document.getElementById('predSbp').textContent = prediction.sbp_raw || prediction.sbp;
-                document.getElementById('predDbp').textContent = prediction.dbp_raw || prediction.dbp;
+                // Display prediction data (use raw values for calibration) - Round to whole numbers
+                document.getElementById('predSbp').textContent = Math.round(prediction.sbp_raw || prediction.sbp);
+                document.getElementById('predDbp').textContent = Math.round(prediction.dbp_raw || prediction.dbp);
 
                 const timestamp = new Date(prediction.timestamp);
                 document.getElementById('predTimestamp').textContent = timestamp.toLocaleTimeString();
