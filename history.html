@@ -119,12 +119,6 @@
                     const timestamp = new Date(pred.timestamp);
                     const formattedTime = timestamp.toLocaleString();
 
-                    let qualityBadge = 'badge-ghost';
-                    if (pred.signal_quality === 'excellent') qualityBadge = 'badge-success';
-                    else if (pred.signal_quality === 'good') qualityBadge = 'badge-primary';
-                    else if (pred.signal_quality === 'fair') qualityBadge = 'badge-warning';
-                    else if (pred.signal_quality === 'poor') qualityBadge = 'badge-error';
-
                     const calibratedBadge = pred.calibrated ?
                         '<span class="badge badge-success badge-sm">Yes</span>' :
                         '<span class="badge badge-ghost badge-sm">No</span>';
@@ -135,7 +129,6 @@
                 <td><span class="font-semibold">${Math.round(pred.sbp)}</span> <span class="text-xs opacity-70">mmHg</span></td>
                 <td><span class="font-semibold">${Math.round(pred.dbp)}</span> <span class="text-xs opacity-70">mmHg</span></td>
                 <td><span class="font-semibold">${Math.round(pred.heart_rate)}</span> <span class="text-xs opacity-70">BPM</span></td>
-                <td><span class="badge badge-sm ${qualityBadge}">${pred.signal_quality}</span></td>
                 <td>${calibratedBadge}</td>
                 <td>
                     <button class="btn btn-square btn-sm btn-ghost text-error delete-btn" data-timestamp="${pred.timestamp}" title="Delete">
@@ -166,7 +159,6 @@
                                 <th>SBP</th>
                                 <th>DBP</th>
                                 <th>HR</th>
-                                <th>Quality</th>
                                 <th>Calibrated</th>
                                 <th>Actions</th>
                             </tr>

@@ -665,26 +665,6 @@ class PPGRecorder {
             window.historyManager.addMeasurement(measurementData);
         }
 
-        // Update metadata with DaisyUI badge classes
-        const qualityElement = document.getElementById('qualityValue');
-        qualityElement.textContent = data.signal_quality;
-
-        // Set badge color based on quality
-        let qualityBadgeClass = 'badge badge-lg';
-        if (data.signal_quality === 'excellent') {
-            qualityBadgeClass += ' badge-success';
-        } else if (data.signal_quality === 'good') {
-            qualityBadgeClass += ' badge-primary';
-        } else if (data.signal_quality === 'fair') {
-            qualityBadgeClass += ' badge-warning';
-        } else {
-            qualityBadgeClass += ' badge-error';
-        }
-        qualityElement.className = qualityBadgeClass;
-
-        const confidencePercent = (data.confidence * 100).toFixed(0);
-        document.getElementById('confidenceValue').textContent = `${confidencePercent}%`;
-
         const calibratedElement = document.getElementById('calibratedValue');
         calibratedElement.textContent = isCalibrated ? 'Yes' : 'No';
         calibratedElement.className = isCalibrated ? 'badge badge-lg badge-success' : 'badge badge-lg badge-ghost';
